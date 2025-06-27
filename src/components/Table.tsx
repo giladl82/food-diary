@@ -30,16 +30,7 @@ export function EntriesTable({ entries }: { entries: FoodEntry[] }) {
   const handleUpdateEntry = async (data: FoodEntry) => {
     console.log('Submitting edit:', data);
     if (!editFoodEntry?.id) return;
-    await db.foodEntries.update(editFoodEntry.id, {
-      type: data.type,
-      food: data.food,
-      timeStamp: new Date(data.date),
-      date: new Date(data.date).toDateString(),
-      time: {
-        hours: data.time.hours,
-        minutes: data.time.minutes,
-      },
-    });
+    await db.foodEntries.update(editFoodEntry.id, { ...data });
 
     setEditId(null);
   };
@@ -92,7 +83,14 @@ export function EntriesTable({ entries }: { entries: FoodEntry[] }) {
         </Table>
         <EditDialog
           onClose={() => setEditId(null)}
-          onSubmit={handleUpdateEntry}
+          onSubmit={(data) =>
+            handleUpdateEntry({
+              ...data,
+              id: editFoodEntry?.id,
+              timeStamp: new Date(data.date),
+              date: new Date(data.date).toDateString(),
+            })
+          }
           entry={editFoodEntry ?? null}
         />
 
