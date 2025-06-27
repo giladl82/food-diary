@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { UserDialog } from "./components/UserDialog";
-import { FoodDiary } from "./components/FoodDiary";
+import { Diary } from "./components/Diary";
 
 function App() {
   const [userName, setUserName] = useState<string>('');
@@ -15,7 +15,7 @@ function App() {
   return (
     <>
       {userName ? (
-       <FoodDiary />
+       <Diary />
       ) : (
         <UserDialog
           onSubmit={(name) => {

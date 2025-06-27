@@ -30,7 +30,7 @@ export type FormSchema = z.infer<typeof formSchema>;
 export type FoodType = z.infer<typeof foodTypes>;
 
 export type FoodEntry = {
-  id?: number;
+  id?: string;
   type: FoodType;
   food: string;
   timeStamp: Date;

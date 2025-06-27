@@ -1,29 +1,37 @@
-import { FoodDialog } from './FoodDialog';
+import { NewDialog } from './NewDialog';
 import type { FormSchema } from '../types/schema';
 import { useState } from 'react';
 import { DateInput } from './DateInput';
-import { EntriesTable } from './EntriesTable';
+import { EntriesTable } from './Table';
 import ReportDialog from './ReportDialog';
 import { db } from '@/utils/db';
 import { useLiveQuery } from 'dexie-react-hooks';
 
-export function FoodDiary() {
+export function Diary() {
   const [date, setDate] = useState<Date>(new Date());
-  const entries = useLiveQuery(() => db.foodEntries.where('date').equals(date.toDateString()).toArray(), [date]);
+  const entries =
+    useLiveQuery(
+      () => db.foodEntries.where('date').equals(date.toDateString()).toArray(),
+      [date]
+    )?.sort((a, b) => {
+      return new Date(a.timeStamp).getTime() - new Date(b.timeStamp).getTime();
+    }) || [];
 
   const handleFoodDialogSubmit = async (data: FormSchema) => {
-    await db.foodEntries.add({
-      type: data.type,
-      food: data.food,
-      timeStamp: data.date,
-      date: data.date.toDateString(),
-      time: {
-        hours: data.time.hours,
-        minutes: data.time.minutes,
-      },
-    }).catch((error) => {
-      console.error('Error adding food entry:', error);
-    });
+    await db.foodEntries
+      .add({
+        type: data.type,
+        food: data.food,
+        timeStamp: data.date,
+        date: data.date.toDateString(),
+        time: {
+          hours: data.time.hours,
+          minutes: data.time.minutes,
+        },
+      })
+      .catch((error) => {
+        console.error('Error adding food entry:', error);
+      });
   };
 
   return (
@@ -50,7 +58,7 @@ export function FoodDiary() {
           © 2025 Gilad Lev-Ari
         </span>
 
-        <FoodDialog onSubmit={handleFoodDialogSubmit} />
+        <NewDialog onSubmit={handleFoodDialogSubmit} />
       </footer>
     </div>
   );
