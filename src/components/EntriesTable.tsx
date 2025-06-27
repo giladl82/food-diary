@@ -1,5 +1,5 @@
 import { options } from './options';
-import type { FoodEntry } from './schema';
+import type { FoodEntry } from '../types/schema';
 import {
   Table,
   TableBody,

@@ -12,7 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus } from 'lucide-react';
-import { formSchema, type FoodEntry } from './schema';
+import { formSchema, type FormSchema } from '../types/schema';
 import { DateInput } from './DateInput';
 import {
   Select,
@@ -36,11 +36,11 @@ import { options } from './options';
 export function FoodDialog({
   onSubmit,
 }: {
-  onSubmit: (data: FoodEntry) => void;
+  onSubmit: (data: FormSchema) => void;
 }) {
   const [open, setOpen] = useState(false);
 
-  const form = useForm<FoodEntry>({
+  const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     mode: 'onChange',
     reValidateMode: 'onChange',
@@ -57,7 +57,7 @@ export function FoodDialog({
     },
   });
 
-  const onSubmitForm = (values: FoodEntry) => {
+  const onSubmitForm = (values: FormSchema) => {
     const date = new Date(values.date);
     date.setHours(values.time.hours);
     date.setMinutes(values.time.minutes);
@@ -230,7 +230,7 @@ export function FoodDialog({
               />
 
               <DialogFooter>
-                <Button type="submit" disabled={!form.formState.isValid}>
+                <Button type="submit" >
                   Save
                 </Button>
               </DialogFooter>

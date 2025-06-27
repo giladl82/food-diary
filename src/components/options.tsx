@@ -7,7 +7,7 @@ import {
   Popcorn,
   Utensils,
 } from 'lucide-react';
-import type { FoodType } from './schema';
+import type { FoodType } from '../types/schema';
 
 type IconType = typeof Apple;
 

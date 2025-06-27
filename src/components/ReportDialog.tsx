@@ -21,8 +21,9 @@ import { DateInput } from '@/components/DateInput'; // Assuming DateInput is the
 import { useForm } from 'react-hook-form';
 import { format } from 'date-fns';
 import { Download } from 'lucide-react';
-import { queryEntries } from '@/utils/queryEntries';
+// import { queryEntries } from '@/utils/queryEntries';
 import { exportToCSV } from '@/utils/exportToCSV';
+import { db } from '@/utils/db';
 
 const defaultValues = {
   from: format(
@@ -42,32 +43,23 @@ export function ReportDialog() {
 
   const onSubmit = async (data: { from: string; to: string }) => {
     const fromDate = new Date(data.from);
-    const toDate = new Date(data.to);
+    const toDate = new Date(data.to); // Set to end of the day
+    toDate.setHours(23, 59, 59, 999); // Ensure to include the entire day
+    fromDate.setHours(0, 0, 0, 0); // Ensure fromDate starts at the beginning of the day
 
     if (fromDate > toDate) {
       setError("The 'From' date cannot be greater than the 'To' date.");
       return;
     }
-    const entries = (await queryEntries([fromDate, toDate]))
-      .map((entry) => ({
-        ...entry,
-        date: format(new Date(entry.date), 'dd.MM.yyyy'),
-        time: `${entry.time.hours
-          .toString()
-          .padStart(2, '0')}:${entry.time.minutes.toString().padStart(2, '0')}`,
-      }))
-      .sort((a, b) => {
-        const dateComparison =
-          new Date(a.date).getTime() - new Date(b.date).getTime();
-        if (dateComparison !== 0) {
-          return dateComparison;
-        }
-        return (
-          parseInt(a.time.replace(':', ''), 10) -
-          parseInt(b.time.replace(':', ''), 10)
-        );
-      });
 
+    const entries = await db.foodEntries.where('timeStamp').between(
+      fromDate,
+      toDate,
+      true,
+      true
+    ).toArray();
+
+    
     try {
       exportToCSV(
         entries,

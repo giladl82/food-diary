@@ -7,6 +7,7 @@ import { Button } from './ui/button';
 import { Calendar } from './ui/calendar';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
+import { useState } from 'react';
 
 export function DateInput({
   value,
@@ -17,16 +18,19 @@ export function DateInput({
   onChange: (date: Date) => void;
   variant?: 'default' | 'ghost'  | 'outline';
 }) {
+  const [open, setOpen] = useState(false);
+
   const handleDateChange = (date: Date | undefined) => {
     if (date && !isNaN(date.getTime())) {
       onChange(date);
+      setOpen(false);
     }
   };
 
   return (
-    <Popover>
+    <Popover open={open}>
       <PopoverTrigger asChild>
-        <Button variant={variant} className="justify-between">
+        <Button onClick={() => setOpen(true)} variant={variant} className="justify-between">
           {value ? format(value, 'PPP') : 'Select date'} <CalendarIcon />
         </Button>
       </PopoverTrigger>
